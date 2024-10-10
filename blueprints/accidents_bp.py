@@ -2,14 +2,15 @@ from bson import ObjectId
 from flask import Flask,Blueprint,jsonify,request
 from repository.crash_reposintory import *
 from repository.index_repo import initialize_index
+from database.connect import car_accidents
 from repository.csv_repository import init_crash_data
-
+CSV_PATH = "data/Traffic_Crashes.csv"
 accidents_bp = Blueprint('accidents', __name__)
 
 
 @accidents_bp.route('/init_database', methods=['GET'])
 def init_database():
-    init_crash_data()
+    init_crash_data(car_accidents,CSV_PATH)
     return jsonify({"message": "Database initialized"}), 200
 
 

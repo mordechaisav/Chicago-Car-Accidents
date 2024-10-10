@@ -8,13 +8,9 @@ from repository.crash_reposintory import *
 
 
 @pytest.fixture(scope="function")
-def collections(init_test_data):
+def collections(init_crash_data(car_accidents,)):
     return init_test_data['accidents']
 
-
-# def test_indexing(collections: Collection):
-#     res = indexing_collection()
-#     assert isinstance(res, Success)
 
 
 def test_get_by_area(collections: Collection):
@@ -24,16 +20,16 @@ def test_get_by_area(collections: Collection):
 
 
 def test_get_by_period(collections: Collection):
-    res = get_accidents_by_period(225,"month",("3","2020"))
+    res = count_accidents_by_time_and_area("225","month",datetime(2022,1,5))
     assert isinstance(res, Success)
     assert res.unwrap() > 0
 
 def test_get_by_cause_area(collections: Collection):
-    res = get_accidents_by_cause_and_area(225)
+    res = get_accidents_grouped_by_cause("225")
     assert isinstance(res, Success)
     assert res.unwrap() > 0
 
 def test_get_accidents_by_injured_area(collections: Collection):
-    res = get_accidents_by_injured_and_area(225)
+    res = get_accidents_statistics("225")
     assert isinstance(res, Success)
     assert res.unwrap() > 0

@@ -1,4 +1,4 @@
-from database.connect import car_accidents,locations
+from database.connect import car_accidents
 from utils.csv_util import read_csv,parse_date,safe_int
 from datetime import datetime
 
@@ -7,12 +7,11 @@ CSV_PATH = "data/Traffic_Crashes.csv"
 
 
 
-def init_crash_data():
+def init_crash_data(collection,csv_path):
    car_accidents.drop()
-   locations.drop()
 
 
-   for row in read_csv(CSV_PATH):
+   for row in read_csv(csv_path):
        location = {
            'street_no': row['STREET_NO'],
            'street_direction': row['STREET_DIRECTION'],
@@ -58,4 +57,4 @@ def init_crash_data():
            'injuries': injuries
        }
 
-       car_accidents.insert_one(crash)
+       collection.insert_one(crash)

@@ -53,9 +53,6 @@ def count_accidents_by_time_and_area(beat_of_occurrence, time_period, date):
         return result[0]['total_accidents']
     else:
         return 0
-# date with type datetime
-date = datetime(2023, 9, 18, 00, 0, 0)
-
 
 def get_accidents_grouped_by_cause(beat_of_occurrence):
     pipeline = [
