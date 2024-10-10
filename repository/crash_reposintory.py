@@ -2,8 +2,22 @@ from database.connect import car_accidents,locations
 from datetime import datetime, timedelta
 
 
-def count_accidents_by_beat(beat_of_occurrence):
-    return car_accidents.count_documents({'beat_of_occurrence': beat_of_occurrence})
+def count_accidents_by_area(beat_of_occurrence):
+    beat_of_occurrence = str(beat_of_occurrence)
+    pipeline = [
+        {
+            '$match': {
+                'location.beat_of_occurrence': beat_of_occurrence,
+            }
+        },
+        {
+            '$count': 'total_accidents'
+        }
+    ]
+    result = list(car_accidents.aggregate(pipeline))
+    if result:
+        return result[0]['total_accidents']
+
 
 
 
@@ -42,10 +56,6 @@ def count_accidents_by_time_and_area(beat_of_occurrence, time_period, date):
 # date with type datetime
 date = datetime(2023, 9, 18, 00, 0, 0)
 
-print(count_accidents_by_beat("225"))
-print(count_accidents_by_time_and_area("411", "day", date))
-print(count_accidents_by_time_and_area("411", "week", date))
-print(count_accidents_by_time_and_area("1655", "month", date))
 
 def get_accidents_grouped_by_cause(beat_of_occurrence):
     pipeline = [
@@ -70,7 +80,7 @@ def get_accidents_grouped_by_cause(beat_of_occurrence):
     return results
 
 
-print(get_accidents_grouped_by_cause("225"))
+
 
 def get_accidents_statistics(beat_of_occurrence):
 
@@ -89,7 +99,7 @@ def get_accidents_statistics(beat_of_occurrence):
                 'total_injuries': {'$sum': '$injuries.total'},
                 'fatal_injuries': {'$sum': '$injuries.fatal'},
                 'non_fatal_injuries': {'$sum': {'$subtract': ['$injuries.total', '$injuries.fatal']}},
-                'events': {'$push': '$$ROOT'}  
+                'events': {'$push': '$$ROOT'}
             }
         }
     ]
@@ -99,9 +109,7 @@ def get_accidents_statistics(beat_of_occurrence):
 
 
     if not result:
-        return "No data found for the specified location."
+        return "No data found"
 
 
     return result[0]
-
-print(get_accidents_statistics("225"))

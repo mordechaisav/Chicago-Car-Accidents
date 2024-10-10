@@ -2,7 +2,7 @@ from database.connect import car_accidents,locations
 from utils.csv_util import read_csv,parse_date,safe_int
 from datetime import datetime
 
-CSV_PATH = "../data/Traffic_Crashes.csv"
+CSV_PATH = "data/Traffic_Crashes.csv"
 
 
 
@@ -59,4 +59,3 @@ def init_crash_data():
        }
 
        car_accidents.insert_one(crash)
-init_crash_data()
