@@ -1,6 +1,6 @@
-from database.connect import car_accidents
+
 from utils.csv_util import read_csv,parse_date,safe_int
-from datetime import datetime
+
 
 CSV_PATH = "data/Traffic_Crashes.csv"
 
@@ -8,7 +8,7 @@ CSV_PATH = "data/Traffic_Crashes.csv"
 
 
 def init_crash_data(collection,csv_path):
-   car_accidents.drop()
+   collection.drop()
 
 
    for row in read_csv(csv_path):

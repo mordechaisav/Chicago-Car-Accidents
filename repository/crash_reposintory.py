@@ -1,8 +1,8 @@
-from database.connect import car_accidents,locations
-from datetime import datetime, timedelta
+from database.connect import car_accidents
+from datetime import timedelta, datetime
 
 
-def count_accidents_by_area(beat_of_occurrence):
+def count_accidents_by_area(collection, beat_of_occurrence):
     beat_of_occurrence = str(beat_of_occurrence)
     pipeline = [
         {
@@ -14,14 +14,14 @@ def count_accidents_by_area(beat_of_occurrence):
             '$count': 'total_accidents'
         }
     ]
-    result = list(car_accidents.aggregate(pipeline))
+    result = list(collection.aggregate(pipeline))
     if result:
         return result[0]['total_accidents']
 
 
 
 
-def count_accidents_by_time_and_area(beat_of_occurrence, time_period, date):
+def count_accidents_by_time_and_area(collection, beat_of_occurrence, time_period, date):
     if time_period == 'day':
         start_date = date.replace(hour=0, minute=0, second=0, microsecond=0)
         end_date = start_date + timedelta(days=1)
@@ -36,25 +36,24 @@ def count_accidents_by_time_and_area(beat_of_occurrence, time_period, date):
 
     pipeline = [
         {
-
-
             '$match': {
                 'location.beat_of_occurrence': beat_of_occurrence,
                 'crash_date.date': {'$gte': start_date, '$lt': end_date}
             }
         },
         {
-            '$count': 'total_accidents'
+            '$count': 'total_accidents'  # סופר את המספר של התאונות
         }
     ]
 
-    result = list(car_accidents.aggregate(pipeline))
+    result = list(collection.aggregate(pipeline))
     if result:
-        return result[0]['total_accidents']
+        return result[0]  # מחזיר את המספר
     else:
-        return 0
+        return {'total_accidents': 0}  # מחזיר 0 אם אין תוצאות
 
-def get_accidents_grouped_by_cause(beat_of_occurrence):
+
+def get_accidents_grouped_by_cause(collection,beat_of_occurrence):
     pipeline = [
         {
             '$match': {
@@ -73,13 +72,13 @@ def get_accidents_grouped_by_cause(beat_of_occurrence):
             }
         }
     ]
-    results = list(car_accidents.aggregate(pipeline))
+    results = list(collection.aggregate(pipeline))
     return results
 
 
 
 
-def get_accidents_statistics(beat_of_occurrence):
+def get_accidents_statistics(collection,beat_of_occurrence):
 
 
 
@@ -102,7 +101,7 @@ def get_accidents_statistics(beat_of_occurrence):
     ]
 
 
-    result = list(car_accidents.aggregate(pipeline))
+    result = list(collection.aggregate(pipeline))
 
 
     if not result:
